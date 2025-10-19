@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, 
@@ -228,35 +229,50 @@ function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
       >
-        <Button
-          variant="ghost"
-          className="w-full justify-between p-3"
-          onClick={() => {
-            if (item.children) {
-              onToggle()
-            }
-          }}
-        >
-          <div className="flex items-center space-x-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-              <item.icon className="h-4 w-4" />
+        {item.children ? (
+          <Button
+            variant="ghost"
+            className="w-full justify-between p-3"
+            onClick={onToggle}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                <item.icon className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-medium">{item.label}</span>
+              {item.badge && (
+                <Badge variant="secondary" className="ml-auto">
+                  {item.badge}
+                </Badge>
+              )}
             </div>
-            <span className="text-sm font-medium">{item.label}</span>
-            {item.badge && (
-              <Badge variant="secondary" className="ml-auto">
-                {item.badge}
-              </Badge>
-            )}
-          </div>
-          {item.children && (
             <motion.div
               animate={{ rotate: isExpanded ? 90 : 0 }}
               transition={{ duration: 0.2 }}
             >
               <ChevronRight className="h-4 w-4" />
             </motion.div>
-          )}
-        </Button>
+          </Button>
+        ) : (
+          <Link href={item.href}>
+            <Button
+              variant="ghost"
+              className="w-full justify-start p-3"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                  <item.icon className="h-4 w-4" />
+                </div>
+                <span className="text-sm font-medium">{item.label}</span>
+                {item.badge && (
+                  <Badge variant="secondary" className="ml-auto">
+                    {item.badge}
+                  </Badge>
+                )}
+              </div>
+            </Button>
+          </Link>
+        )}
       </motion.div>
 
       {/* Children */}
@@ -278,13 +294,15 @@ function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start p-2 text-slate-600 dark:text-slate-400"
-                  >
-                    <span className="text-xs">{child.label}</span>
-                  </Button>
+                  <Link href={child.href}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start p-2 text-slate-600 dark:text-slate-400"
+                    >
+                      <span className="text-xs">{child.label}</span>
+                    </Button>
+                  </Link>
                 </motion.div>
               ))}
             </div>
