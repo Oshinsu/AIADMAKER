@@ -1,16 +1,16 @@
 [build]
   # Commande de build optimisée pour Netlify
-  command = "cd apps/web && ./netlify-build.sh"
+  command = "./netlify-build.sh"
   
   # Répertoire de publication
   publish = "apps/web/.next"
   
   # Répertoire de base pour le build
-  base = "apps/web"
+  base = "."
 
 [build.environment]
   # Variables d'environnement pour le build
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
   PNPM_VERSION = "8"
   
   # Variables pour Next.js
