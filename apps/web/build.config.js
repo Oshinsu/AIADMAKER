@@ -1,17 +1,22 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+/**
+ * Configuration de build pour Netlify
+ * Optimisations pour le déploiement
+ */
+
+module.exports = {
+  // Configuration pour éviter les erreurs de build
   experimental: {
-    // React 19 features - désactivé pour éviter les erreurs de build
-    // reactCompiler: true,
+    // Désactiver les fonctionnalités expérimentales qui causent des erreurs
+    reactCompiler: false,
+    turbo: false,
   },
-  turbopack: {
-    rules: {
-      '*.svg': {
-        loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
-    },
-  },
+  
+  // Configuration pour les performances
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  
+  // Configuration pour les images
   images: {
     remotePatterns: [
       {
@@ -20,6 +25,8 @@ const nextConfig = {
       },
     ],
   },
+  
+  // Configuration webpack pour éviter les erreurs
   webpack: (config, { isServer }) => {
     // Optimisations pour les performances
     if (!isServer) {
@@ -28,17 +35,29 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        buffer: false,
+        process: false,
       }
     }
     
     return config
   },
-  // Optimisations de performance - swcMinify est déprécié dans Next.js 15
-  compress: true,
-  poweredByHeader: false,
-  generateEtags: false,
   
-  // Configuration pour les API externes
+  // Configuration pour les redirections
+  async redirects() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/',
+        permanent: true,
+      },
+    ]
+  },
+  
+  // Configuration pour les headers
   async headers() {
     return [
       {
@@ -52,17 +71,4 @@ const nextConfig = {
       },
     ]
   },
-  
-  // Configuration pour les redirections
-  async redirects() {
-    return [
-      {
-        source: '/dashboard',
-        destination: '/',
-        permanent: true,
-      },
-    ]
-  },
 }
-
-module.exports = nextConfig

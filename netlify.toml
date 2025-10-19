@@ -1,0 +1,64 @@
+[build]
+  # Commande de build optimisée pour Netlify
+  command = "cd apps/web && ./netlify-build.sh"
+  
+  # Répertoire de publication
+  publish = "apps/web/.next"
+  
+  # Répertoire de base pour le build
+  base = "apps/web"
+
+[build.environment]
+  # Variables d'environnement pour le build
+  NODE_VERSION = "18"
+  PNPM_VERSION = "8"
+  
+  # Variables pour Next.js
+  NEXT_TELEMETRY_DISABLED = "1"
+  NODE_ENV = "production"
+
+# Configuration pour les fonctions serverless
+[functions]
+  directory = "apps/web/.next/serverless"
+
+# Configuration pour les redirections
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+# Configuration pour les headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Configuration pour les assets statiques
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Configuration pour les images
+[[headers]]
+  for = "/_next/image*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Configuration pour les pages
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Configuration pour les API routes
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"

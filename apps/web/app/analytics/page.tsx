@@ -1,295 +1,516 @@
 'use client'
 
-import React from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { 
-  BarChart3, 
   TrendingUp, 
   TrendingDown, 
+  Activity, 
   Users, 
-  Clock, 
-  DollarSign,
-  Target,
+  Target, 
+  Clock,
   Zap,
-  CheckCircle,
-  AlertCircle,
-  Activity
+  Brain,
+  BarChart3,
+  PieChart,
+  LineChart,
+  Calendar,
+  Filter,
+  Download,
+  RefreshCw,
+  Eye,
+  MousePointer,
+  Heart,
+  Star
 } from 'lucide-react'
-import { useAnalyticsStore } from '@/stores/analytics-store'
+
+interface AnalyticsData {
+  overview: {
+    totalCampaigns: number
+    activeAgents: number
+    successRate: number
+    averageTime: number
+    totalRevenue: number
+    conversionRate: number
+  }
+  performance: {
+    campaigns: Array<{
+      id: string
+      name: string
+      status: 'completed' | 'running' | 'pending' | 'failed'
+      performance: number
+      impressions: number
+      clicks: number
+      conversions: number
+      revenue: number
+      startDate: string
+      endDate?: string
+    }>
+  }
+  agents: Array<{
+    id: string
+    name: string
+    type: string
+    metrics: {
+      cpu: number
+      memory: number
+      requests: number
+      successRate: number
+    }
+  }>
+  trends: {
+    daily: Array<{ date: string; value: number }>
+    weekly: Array<{ week: string; value: number }>
+    monthly: Array<{ month: string; value: number }>
+  }
+}
 
 export default function AnalyticsPage() {
-  const { analytics, timeRange, setTimeRange } = useAnalyticsStore()
+  const [data, setData] = useState<AnalyticsData>({
+    overview: {
+      totalCampaigns: 24,
+      activeAgents: 8,
+      successRate: 92,
+      averageTime: 3.2,
+      totalRevenue: 125000,
+      conversionRate: 4.8
+    },
+    performance: {
+      campaigns: [
+        {
+          id: '1',
+          name: 'Nike Summer 2025',
+          status: 'completed',
+          performance: 95,
+          impressions: 1250000,
+          clicks: 45000,
+          conversions: 2100,
+          revenue: 45000,
+          startDate: '2025-01-15',
+          endDate: '2025-02-15'
+        },
+        {
+          id: '2',
+          name: 'Apple iPhone 16',
+          status: 'running',
+          performance: 88,
+          impressions: 890000,
+          clicks: 32000,
+          conversions: 1500,
+          revenue: 32000,
+          startDate: '2025-02-01'
+        },
+        {
+          id: '3',
+          name: 'Tesla Model Y',
+          status: 'pending',
+          performance: 0,
+          impressions: 0,
+          clicks: 0,
+          conversions: 0,
+          revenue: 0,
+          startDate: '2025-02-20'
+        }
+      ]
+    },
+    agents: [
+      {
+        id: '1',
+        name: 'Brief Generator',
+        type: 'Marketing',
+        metrics: { cpu: 45, memory: 60, requests: 150, successRate: 95 }
+      },
+      {
+        id: '2',
+        name: 'Image Artisan',
+        type: 'Creative',
+        metrics: { cpu: 78, memory: 85, requests: 89, successRate: 88 }
+      },
+      {
+        id: '3',
+        name: 'Brand Brain',
+        type: 'Strategy',
+        metrics: { cpu: 32, memory: 45, requests: 203, successRate: 92 }
+      }
+    ],
+    trends: {
+      daily: Array.from({ length: 30 }, (_, i) => ({
+        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        value: Math.floor(Math.random() * 1000) + 500
+      })),
+      weekly: Array.from({ length: 12 }, (_, i) => ({
+        week: `Semaine ${i + 1}`,
+        value: Math.floor(Math.random() * 5000) + 2000
+      })),
+      monthly: Array.from({ length: 6 }, (_, i) => ({
+        month: new Date(Date.now() - (5 - i) * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { month: 'long' }),
+        value: Math.floor(Math.random() * 20000) + 10000
+      }))
+    }
+  })
 
-  const timeRanges = [
-    { value: '7d', label: '7 jours' },
-    { value: '30d', label: '30 jours' },
-    { value: '90d', label: '90 jours' },
-    { value: '1y', label: '1 an' }
-  ]
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'daily' | 'weekly' | 'monthly'>('daily')
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Simulation des métriques en temps réel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData(prev => ({
+        ...prev,
+        agents: prev.agents.map(agent => ({
+          ...agent,
+          metrics: {
+            ...agent.metrics,
+            cpu: Math.random() * 100,
+            memory: Math.random() * 100,
+            requests: Math.floor(Math.random() * 1000)
+          }
+        }))
+      }))
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleRefresh = async () => {
+    setIsLoading(true)
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setIsLoading(false)
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('fr-FR', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount)
+  }
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('fr-FR').format(num)
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
-          <p className="text-muted-foreground">
-            Métriques et performances de vos campagnes IA
+          <h1 className="text-3xl font-bold">Analytics SOTA 2025</h1>
+          <p className="text-gray-600 mt-2">
+            Métriques avancées et insights en temps réel
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-1">
-            {timeRanges.map((range) => (
-              <Button
-                key={range.value}
-                variant={timeRange === range.value ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setTimeRange(range.value)}
-              >
-                {range.label}
-              </Button>
-            ))}
-          </div>
-          <Button variant="outline" size="sm">
-            <BarChart3 className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+        
+        <div className="flex items-center space-x-4">
+          <button 
+            onClick={handleRefresh}
+            className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            disabled={isLoading}
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Actualiser</span>
+          </button>
+          
+          <button className="flex items-center space-x-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <Download className="w-4 h-4" />
+            <span>Exporter</span>
+          </button>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Workflows Exécutés</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.workflowsExecuted}</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              +12% vs période précédente
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Campagnes</p>
+                <p className="text-2xl font-bold">{data.overview.totalCampaigns}</p>
+              </div>
+              <Target className="w-8 h-8 text-blue-600" />
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Temps Moyen</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.averageTime}</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingDown className="h-3 w-3 mr-1 text-green-500" />
-              -8% vs période précédente
+            <div className="flex items-center mt-2">
+              <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+              <span className="text-sm text-green-600">+12%</span>
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Taux de Succès</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{analytics.successRate}%</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-green-500" />
-              +2% vs période précédente
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Coût Total</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">${analytics.totalCost}</div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TrendingUp className="h-3 w-3 mr-1 text-red-500" />
-              +5% vs période précédente
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </motion.div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Workflows Over Time */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Workflows dans le temps</CardTitle>
-            <CardDescription>
-              Évolution du nombre de workflows exécutés
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 flex items-center justify-center bg-muted/50 rounded-lg">
-              <div className="text-center">
-                <BarChart3 className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
-                <p className="text-muted-foreground">Graphique des workflows</p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Agents Actifs</p>
+                <p className="text-2xl font-bold">{data.overview.activeAgents}</p>
+              </div>
+              <Activity className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="flex items-center mt-2">
+              <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+              <span className="text-sm text-green-600">+8%</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Taux de Succès</p>
+                <p className="text-2xl font-bold">{data.overview.successRate}%</p>
+              </div>
+              <Star className="w-8 h-8 text-yellow-600" />
+            </div>
+            <div className="mt-2">
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-yellow-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${data.overview.successRate}%` }}
+                />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
 
-        {/* Agent Performance */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance des agents</CardTitle>
-            <CardDescription>
-              Temps d'exécution par agent
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analytics.agentPerformance.map((agent) => (
-                <div key={agent.name} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    <span className="text-sm font-medium">{agent.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">{agent.time}ms</span>
-                    <Badge variant={agent.trend === 'up' ? 'destructive' : 'default'}>
-                      {agent.trend === 'up' ? '↑' : '↓'} {agent.change}%
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Temps Moyen</p>
+                <p className="text-2xl font-bold">{data.overview.averageTime}s</p>
+              </div>
+              <Clock className="w-8 h-8 text-purple-600" />
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-center mt-2">
+              <TrendingDown className="w-4 h-4 text-green-600 mr-1" />
+              <span className="text-sm text-green-600">-15%</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Revenus</p>
+                <p className="text-2xl font-bold">{formatCurrency(data.overview.totalRevenue)}</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="flex items-center mt-2">
+              <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+              <span className="text-sm text-green-600">+25%</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Conversion</p>
+                <p className="text-2xl font-bold">{data.overview.conversionRate}%</p>
+              </div>
+              <MousePointer className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="flex items-center mt-2">
+              <TrendingUp className="w-4 h-4 text-green-600 mr-1" />
+              <span className="text-sm text-green-600">+3%</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Detailed Analytics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Success Rate by Type */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Taux de succès par type</CardTitle>
-            <CardDescription>
-              Performance par catégorie de workflow
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+      {/* Performance Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Campaigns Performance */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.7 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center space-x-2 mb-4">
+              <BarChart3 className="w-5 h-5" />
+              <h3 className="text-lg font-semibold">Performance des Campagnes</h3>
+            </div>
             <div className="space-y-4">
-              {analytics.successByType.map((type) => (
-                <div key={type.name} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{type.name}</span>
-                    <span className="text-sm text-muted-foreground">{type.rate}%</span>
+              {data.performance.campaigns.map((campaign, index) => (
+                <div key={campaign.id} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium">{campaign.name}</h4>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      campaign.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      campaign.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                      campaign.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {campaign.status}
+                    </span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div 
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${type.rate}%` }}
-                    />
+                  
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>Performance</span>
+                      <span>{campaign.performance}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${campaign.performance}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">Impressions</span>
+                      <p className="font-semibold">{formatNumber(campaign.impressions)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Clics</span>
+                      <p className="font-semibold">{formatNumber(campaign.clicks)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Conversions</span>
+                      <p className="font-semibold">{formatNumber(campaign.conversions)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Revenus</span>
+                      <p className="font-semibold">{formatCurrency(campaign.revenue)}</p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
 
-        {/* Error Analysis */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Analyse des erreurs</CardTitle>
-            <CardDescription>
-              Types d'erreurs les plus fréquents
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Agents Metrics */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.8 }}
+        >
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center space-x-2 mb-4">
+              <Brain className="w-5 h-5" />
+              <h3 className="text-lg font-semibold">Métriques des Agents</h3>
+            </div>
             <div className="space-y-4">
-              {analytics.errorAnalysis.map((error) => (
-                <div key={error.type} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <AlertCircle className="h-4 w-4 text-red-500" />
-                    <span className="text-sm font-medium">{error.type}</span>
+              {data.agents.map((agent) => (
+                <div key={agent.id} className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium">{agent.name}</h4>
+                    <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium">
+                      {agent.type}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">{error.count}</span>
-                    <Badge variant="destructive">{error.percentage}%</Badge>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">CPU</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${agent.metrics.cpu}%` }}
+                          />
+                        </div>
+                        <span className="font-semibold">{agent.metrics.cpu.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">RAM</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-1 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${agent.metrics.memory}%` }}
+                          />
+                        </div>
+                        <span className="font-semibold">{agent.metrics.memory.toFixed(1)}%</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Requêtes</span>
+                      <p className="font-semibold">{agent.metrics.requests}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Succès</span>
+                      <p className="font-semibold">{agent.metrics.successRate}%</p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Cost Analysis */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Analyse des coûts</CardTitle>
-            <CardDescription>
-              Répartition des coûts par service
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analytics.costAnalysis.map((cost) => (
-                <div key={cost.service} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-2 h-2 rounded-full ${cost.color}`} />
-                    <span className="text-sm font-medium">{cost.service}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-muted-foreground">${cost.amount}</span>
-                    <Badge variant="outline">{cost.percentage}%</Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Recent Activity */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Activité récente</CardTitle>
-          <CardDescription>
-            Derniers workflows et événements
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {analytics.recentActivity.map((activity, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                className="flex items-center space-x-4 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+      {/* Timeframe Selector */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.9 }}
+      >
+        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+          <div className="flex items-center space-x-2 mb-4">
+            <LineChart className="w-5 h-5" />
+            <h3 className="text-lg font-semibold">Tendances</h3>
+          </div>
+          <div className="flex space-x-2 mb-4">
+            {(['daily', 'weekly', 'monthly'] as const).map((timeframe) => (
+              <button
+                key={timeframe}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  selectedTimeframe === timeframe 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+                onClick={() => setSelectedTimeframe(timeframe)}
               >
-                <div className={`p-2 rounded-full ${activity.iconBg}`}>
-                  {activity.icon === 'success' ? (
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                  ) : activity.icon === 'error' ? (
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                  ) : (
-                    <Activity className="h-4 w-4 text-blue-600" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{activity.title}</p>
-                  <p className="text-xs text-muted-foreground">{activity.description}</p>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {activity.timestamp}
-                </div>
-              </motion.div>
+                {timeframe === 'daily' ? 'Quotidien' :
+                 timeframe === 'weekly' ? 'Hebdomadaire' : 'Mensuel'}
+              </button>
             ))}
           </div>
-        </CardContent>
-      </Card>
+          
+          <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <PieChart className="w-16 h-16 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-600">Graphique des tendances</p>
+              <p className="text-sm text-gray-500">
+                {data.trends[selectedTimeframe].length} points de données
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   )
 }

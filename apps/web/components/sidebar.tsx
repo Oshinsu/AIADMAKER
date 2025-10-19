@@ -105,7 +105,6 @@ const categories = ['Strategy', 'Creation', 'Visual', 'Video', 'Audio', 'Quality
 
 export function Sidebar() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const { addNode } = useWorkflowStore()
 
   const filteredNodes = selectedCategory 
     ? agentNodes.filter(node => node.category === selectedCategory)
@@ -145,7 +144,7 @@ export function Sidebar() {
               <Card 
                 key={node.id}
                 className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => addNode(node.id)}
+                onClick={() => console.log('Node clicked:', node.id)}
               >
                 <CardContent className="p-3">
                   <div className="flex items-center space-x-3">

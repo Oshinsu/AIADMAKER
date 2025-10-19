@@ -11,11 +11,12 @@ import {
   Info,
   Clock,
   Filter,
-  MarkAsRead
+  Check
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useUIStore } from '@/stores/ui-store'
+import { cn } from '@/lib/utils'
 
 interface NotificationCenterProps {
   onClose: () => void
@@ -76,12 +77,12 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
                 notifications.forEach(n => markNotificationAsRead(n.id))
               }}
             >
-              <MarkAsRead className="h-4 w-4" />
+              <Check className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={clearNotifications}
+              onClick={clearAllNotifications}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -170,7 +171,7 @@ export function NotificationCenter({ onClose }: NotificationCenterProps) {
                     <div className="flex items-center space-x-1 mt-1">
                       <Clock className="h-3 w-3 text-slate-400" />
                       <span className="text-xs text-slate-400">
-                        {notification.timestamp.toLocaleTimeString()}
+                        {new Date(notification.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
                   </div>
