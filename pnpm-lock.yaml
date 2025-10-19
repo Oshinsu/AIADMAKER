@@ -238,6 +238,12 @@ importers:
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      eslint:
+        specifier: ^9.38.0
+        version: 9.38.0(jiti@1.21.7)
+      eslint-config-next:
+        specifier: ^15.0.0
+        version: 15.5.6(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.3)
       framer-motion:
         specifier: ^11.0.0
         version: 11.18.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -293,12 +299,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.2.2(@types/react@19.2.2)
-      eslint:
-        specifier: ^9.38.0
-        version: 9.38.0(jiti@1.21.7)
-      eslint-config-next:
-        specifier: ^15.0.0
-        version: 15.5.6(eslint@9.38.0(jiti@1.21.7))(typescript@5.9.3)
 
   packages/agents:
     dependencies:
