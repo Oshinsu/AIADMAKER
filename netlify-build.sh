@@ -17,10 +17,10 @@ pnpm install --frozen-lockfile
 
 # Build du package shared d'abord
 echo "🔧 Building shared package..."
-pnpm --filter @ai-ad-maker/shared run build
+cd packages/shared && pnpm build && cd ../..
 
 # Build de l'application web
 echo "🏗️ Building web application..."
-pnpm --filter @ai-ad-maker/web run build:netlify
+cd apps/web && pnpm build:netlify && cd ../..
 
 echo "✅ Build completed successfully!"
