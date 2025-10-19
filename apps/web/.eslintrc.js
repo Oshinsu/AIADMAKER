@@ -1,10 +1,7 @@
 module.exports = {
-  root: true,
   extends: [
-    'eslint:recommended',
+    'next/core-web-vitals',
   ],
-  parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
   rules: {
     'prefer-const': 'warn',
     'no-var': 'warn',
@@ -15,16 +12,4 @@ module.exports = {
     '@next/next/no-img-element': 'off',
     'jsx-a11y/alt-text': 'off',
   },
-  env: {
-    node: true,
-    es2022: true,
-    browser: true,
-  },
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'build/',
-    '.next/',
-    '*.config.js',
-  ],
 }
