@@ -137,17 +137,28 @@ export function Sidebar() {
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -320, opacity: 0 }}
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className="flex h-full w-80 flex-col border-r border-slate-200/60 bg-white/80 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/80"
+      className="flex h-full w-80 flex-col border-r border-slate-200/20 bg-gradient-to-b from-white/95 via-white/90 to-white/85 backdrop-blur-2xl shadow-2xl dark:border-slate-700/20 dark:bg-gradient-to-b dark:from-slate-900/95 dark:via-slate-900/90 dark:to-slate-900/85"
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-6">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-          Navigation
-        </h2>
+      <div className="relative flex items-center justify-between p-6 border-b border-slate-200/30 dark:border-slate-700/30">
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg blur-sm"></div>
+            <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-lg">
+              <Brain className="h-5 w-5 text-white" />
+            </div>
+          </div>
+          <div>
+            <h2 className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              AI Ad Maker
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Navigation</p>
+          </div>
+        </div>
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden"
+          className="lg:hidden hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-all duration-200"
           onClick={() => setSidebarOpen(false)}
         >
           ×
@@ -155,27 +166,33 @@ export function Sidebar() {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-6 pb-4">
-        <div className="space-y-2">
+      <div className="px-6 pb-6">
+        <div className="space-y-3">
+          <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            Actions Rapides
+          </h3>
           {quickActions.map((action) => (
             <motion.div
               key={action.id}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
+              className="relative group"
             >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-100/50 to-transparent dark:via-slate-800/50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <Button
                 variant="ghost"
-                className="w-full justify-start space-x-3 p-3"
+                className="relative w-full justify-start space-x-3 p-4 rounded-xl hover:bg-transparent transition-all duration-200"
               >
                 <div className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-lg",
-                  action.color === 'blue' && "bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400",
-                  action.color === 'purple' && "bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-                  action.color === 'green' && "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400"
+                  "flex h-10 w-10 items-center justify-center rounded-xl relative overflow-hidden",
+                  action.color === 'blue' && "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25",
+                  action.color === 'purple' && "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/25",
+                  action.color === 'green' && "bg-gradient-to-br from-green-500 to-green-600 text-white shadow-lg shadow-green-500/25"
                 )}>
-                  <action.icon className="h-4 w-4" />
+                  <div className="absolute inset-0 bg-white/20 rounded-xl"></div>
+                  <action.icon className="h-5 w-5 relative z-10" />
                 </div>
-                <span className="text-sm font-medium">{action.label}</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{action.label}</span>
               </Button>
             </motion.div>
           ))}
@@ -225,30 +242,36 @@ function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
   return (
     <div className="space-y-1">
       <motion.div
-        whileHover={{ x: 4 }}
+        whileHover={{ x: 6, scale: 1.02 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
+        className="relative group"
       >
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
         {item.children ? (
           <Button
             variant="ghost"
-            className="w-full justify-between p-3"
+            className="relative w-full justify-between p-4 rounded-xl hover:bg-transparent transition-all duration-200"
             onClick={onToggle}
           >
             <div className="flex items-center space-x-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-                <item.icon className="h-4 w-4" />
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-xl blur-sm opacity-50"></div>
+                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 shadow-lg">
+                  <item.icon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                </div>
               </div>
-              <span className="text-sm font-medium">{item.label}</span>
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item.label}</span>
               {item.badge && (
-                <Badge variant="secondary" className="ml-auto">
+                <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25">
                   {item.badge}
                 </Badge>
               )}
             </div>
             <motion.div
               animate={{ rotate: isExpanded ? 90 : 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="text-slate-400 dark:text-slate-500"
             >
               <ChevronRight className="h-4 w-4" />
             </motion.div>
@@ -257,15 +280,18 @@ function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
           <Link href={item.href}>
             <Button
               variant="ghost"
-              className="w-full justify-start p-3"
+              className="relative w-full justify-start p-4 rounded-xl hover:bg-transparent transition-all duration-200"
             >
               <div className="flex items-center space-x-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
-                  <item.icon className="h-4 w-4" />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-600 rounded-xl blur-sm opacity-50"></div>
+                  <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 shadow-lg">
+                    <item.icon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
+                  </div>
                 </div>
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{item.label}</span>
                 {item.badge && (
-                  <Badge variant="secondary" className="ml-auto">
+                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg shadow-blue-500/25">
                     {item.badge}
                   </Badge>
                 )}
@@ -282,25 +308,28 @@ function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="ml-6 space-y-1">
-              {item.children.map((child) => (
+            <div className="ml-8 space-y-2 border-l-2 border-slate-200/30 dark:border-slate-700/30 pl-4 py-2">
+              {item.children.map((child, index) => (
                 <motion.div
                   key={child.id}
-                  whileHover={{ x: 8 }}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2 }}
+                  whileHover={{ x: 8, scale: 1.02 }}
+                  initial={{ opacity: 0, x: -20, y: 10 }}
+                  animate={{ opacity: 1, x: 0, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  className="relative group"
                 >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                   <Link href={child.href}>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="w-full justify-start p-2 text-slate-600 dark:text-slate-400"
+                      className="relative w-full justify-start p-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-transparent transition-all duration-200"
                     >
-                      <span className="text-xs">{child.label}</span>
+                      <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 opacity-60 group-hover:opacity-100 transition-opacity duration-200"></div>
+                      <span className="text-sm font-medium">{child.label}</span>
                     </Button>
                   </Link>
                 </motion.div>

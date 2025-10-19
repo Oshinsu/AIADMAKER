@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { 
   TrendingUp, 
   Users, 
@@ -184,25 +184,42 @@ export function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="flex items-center justify-between"
+        className="relative overflow-hidden"
       >
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-            Dashboard
-          </h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Vue d'ensemble de votre espace créatif IA
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline" size="sm">
-            <BarChart3 className="mr-2 h-4 w-4" />
-            Rapports
-          </Button>
-          <Button size="sm">
-            <Sparkles className="mr-2 h-4 w-4" />
-            Nouveau Workflow
-          </Button>
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5 rounded-2xl"></div>
+        <div className="relative flex items-center justify-between p-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-lg opacity-30"></div>
+                <div className="relative bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-xl">
+                  <Brain className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
+                  Dashboard
+                </h1>
+                <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
+                  Vue d'ensemble de votre espace créatif IA
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-slate-500 dark:text-slate-400">Système opérationnel</span>
+            </div>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Button variant="outline" size="sm">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Rapports
+            </Button>
+            <Button size="sm">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Nouveau Workflow
+            </Button>
+          </div>
         </div>
       </motion.div>
 
