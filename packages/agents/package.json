@@ -1,0 +1,36 @@
+{
+  "name": "@ai-ad-maker/agents",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@langchain/openai": "^1.0.0",
+    "@langchain/anthropic": "^1.0.0",
+    "@langchain/core": "^1.0.0",
+    "@langchain/community": "^1.0.0",
+    "langchain": "^1.0.0",
+    "@langchain/langgraph": "^0.0.1",
+    "openai": "^4.60.0",
+    "@anthropic-ai/sdk": "^0.30.0",
+    "zod": "^3.23.8",
+    "axios": "^1.6.0",
+    "dotenv": "^16.4.0",
+    "@ai-ad-maker/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.7.0",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0"
+  }
+}

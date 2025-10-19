@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(CREATIVE)
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  workflows Workflow[]
+  jobs      Job[]
+  approvals Approval[]
+
+  @@map("users")
+}
+
+model Workflow {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  nodes       Json
+  edges       Json
+  status      WorkflowStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  userId User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  jobs   Job[]
+
+  @@map("workflows")
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  workflowId  String
+  status      JobStatus @default(PENDING)
+  priority    Priority @default(NORMAL)
+  inputs      Json?
+  results     Json?
+  logs        Json?
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  userId  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId  String
+
+  @@map("jobs")
+}
+
+model Asset {
+  id          String   @id @default(cuid())
+  type        AssetType
+  name        String
+  url         String
+  metadata    Json?
+  jobId       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  job Job? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@map("assets")
+}
+
+model Approval {
+  id        String        @id @default(cuid())
+  jobId     String
+  status    ApprovalStatus @default(PENDING)
+  comments  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@map("approvals")
+}
+
+enum Role {
+  ADMIN
+  PM
+  CREATIVE
+  TRAFFIC
+}
+
+enum WorkflowStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum JobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+enum AssetType {
+  IMAGE
+  VIDEO
+  AUDIO
+  DOCUMENT
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
