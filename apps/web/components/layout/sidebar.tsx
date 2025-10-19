@@ -215,6 +215,7 @@ interface NavigationItemProps {
   item: typeof navigationItems[0]
   isExpanded: boolean
   onToggle: () => void
+  key?: string
 }
 
 function NavigationItem({ item, isExpanded, onToggle }: NavigationItemProps) {
