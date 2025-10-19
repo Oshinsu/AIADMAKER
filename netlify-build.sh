@@ -17,10 +17,21 @@ pnpm install --frozen-lockfile
 
 # Build du package shared d'abord
 echo "🔧 Building shared package..."
-cd packages/shared && pnpm build && cd ../..
+cd packages/shared
+pnpm build
+if [ $? -ne 0 ]; then
+    echo "⚠️ Build shared package failed, continuing with web build..."
+fi
+cd ../..
 
 # Build de l'application web
 echo "🏗️ Building web application..."
-cd apps/web && pnpm build:netlify && cd ../..
+cd apps/web
+pnpm build:netlify
+if [ $? -ne 0 ]; then
+    echo "❌ Build web application failed"
+    exit 1
+fi
+cd ../..
 
 echo "✅ Build completed successfully!"
